@@ -1,3 +1,48 @@
 #root {
   color: red;
 }
+
+/* Make episode cards look cleaner */
+.episode-card {
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin: 12px 0;
+  background: #fff;
+  color: black; /* remove red text */
+  max-width: 600px;
+}
+
+/* Title */
+.episode-card h3 {
+  margin: 0 0 6px 0;
+}
+
+/* Episode code above image */
+.episode-code {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Image styling */
+.episode-card img {
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Summary spacing */
+.episode-card div {
+  margin-top: 10px;
+}
+
+#searchBar {
+  width: 300px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+#episodeCount {
+  font-weight: bold;
+  margin-bottom: 20px;
+}

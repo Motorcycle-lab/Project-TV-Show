@@ -1,73 +1,77 @@
 //You can edit ALL of the code here
 
-const episodeList = {
-  id: 4952,
-  url: "http://www.tvmaze.com/episodes/4952/game-of-thrones-1x01-winter-is-coming",
-  name: "Winter is Coming",
-  season: 1,
-  number: 1,
-  airdate: "2011-04-17",
-  airtime: "21:00",
-  airstamp: "2011-04-18T01:00:00+00:00",
-  runtime: 60,
-  image: {
-    medium:
-      "http://static.tvmaze.com/uploads/images/medium_landscape/1/2668.jpg",
-    original:
-      "http://static.tvmaze.com/uploads/images/original_untouched/1/2668.jpg",
-  },
-  summary:
-    "<p>Lord Eddard Stark, ruler of the North, is summoned to court by his old friend, King Robert Baratheon, to serve as the King's Hand. Eddard reluctantly agrees after learning of a possible threat to the King's life. Eddard's bastard son Jon Snow must make a painful decision about his own future, while in the distant east Viserys Targaryen plots to reclaim his father's throne, usurped by Robert, by selling his sister in marriage.</p>",
-  _links: {
-    self: {
-      href: "http://api.tvmaze.com/episodes/4952",
-    },
-  },
-};
-
 function setup() {
   const allEpisodes = getAllEpisodes();
+
+  // Add search functionality
+  const searchInput = document.getElementById("searchBar");
+  searchInput.addEventListener("input", () => {
+    const searchTerm = searchInput.value.toLowerCase();
+
+    const filteredEpisodes = allEpisodes.filter((episode) => {
+      const nameMatch = episode.name.toLowerCase().includes(searchTerm);
+      const summaryMatch = episode.summary.toLowerCase().includes(searchTerm);
+      return nameMatch || summaryMatch;
+    });
+
+    makePageForEpisodes(filteredEpisodes);
+    updateEpisodeCount(filteredEpisodes.length, allEpisodes.length);
+  });
+
+  // Initial render
   makePageForEpisodes(allEpisodes);
+  updateEpisodeCount(allEpisodes.length, allEpisodes.length);
 }
 
+// Update the "Displaying X / Y episodes" text
+function updateEpisodeCount(displayed, total) {
+  const countElem = document.getElementById("episodeCount");
+  countElem.textContent = `Displaying ${displayed} / ${total} episodes`;
+}
+
+// Render all episodes into the root element
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  rootElem.innerHTML = "";
+  rootElem.innerHTML = ""; // Clear previous content
 
-  const card = episodeList.map((episode) => createDramaCard(episode));
-  rootElem.append(...card);
+  const cards = episodeList.map((episode) => createEpisodeCard(episode));
+  rootElem.append(...cards);
 }
 
-window.onload = setup;
-
-//Purpose: Put the episode objects  into the root
-//grab the root and then you put it insides : function 1: put the object insides the root
-
-function createChildElement(parentElement, tagName, textContent) {
+// Helper function to create and append a child element
+function createChildElement(parent, tagName, textContent) {
   const element = document.createElement(tagName);
   element.textContent = textContent;
-  parentElement.append(element);
+  parent.append(element);
   return element;
 }
 
-function createDramaCard(episode) {
+// Build a single episode card
+function createEpisodeCard(episode) {
   const card = document.createElement("section");
+  card.className = "episode-card";
 
+  // Format episode code S01E01
   const formattedSeason = String(episode.season).padStart(2, "0");
   const formattedNumber = String(episode.number).padStart(2, "0");
   const episodeCode = `S${formattedSeason}E${formattedNumber}`;
 
-  createChildElement(card, "h3", `${episode.name} - ${episodeCode}`);
-  createChildElement(
-    card,
-    "h3",
-    `season number: ${episode.season}${episode.number} `,
-  );
+  // Title
+  createChildElement(card, "h3", episode.name);
 
+  // Episode code ABOVE the image
+  const codeElem = document.createElement("span");
+  codeElem.textContent = episodeCode;
+  codeElem.className = "episode-code";
+  card.append(codeElem);
+
+  // Episode image
   const img = document.createElement("img");
   img.src = episode.image ? episode.image.medium : "";
+  img.alt = episode.name;
   card.append(img);
 
+  // Summary
   const summaryElem = document.createElement("div");
   summaryElem.innerHTML = episode.summary;
   card.append(summaryElem);
@@ -82,3 +86,4 @@ function createDramaCard(episode) {
 // Grab one from th
 // create a space and put the information inside.
 //create a card and put the data type inside
+window.onload = setup;

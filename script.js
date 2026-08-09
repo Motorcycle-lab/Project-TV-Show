@@ -2,9 +2,10 @@
 
 function setup() {
   const allEpisodes = getAllEpisodes();
-  SetupSearchBar();
+
   createSelectElement();
   createOptionElements();
+  SetupSearchBar();
   EventChange();
 
   handleSearchINput();

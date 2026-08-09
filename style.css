@@ -1,48 +1,39 @@
 #root {
-  color: red;
+ background-color: #ffffff;
+
+  color: black;
+  display: grid;
+grid-template-columns: repeat(3, 1fr);
+ grid-gap: 10px;
+ grid-auto-rows: 520px;
+ max-width: 1000px;
 }
 
-/* Make episode cards look cleaner */
-.episode-card {
-  border: 1px solid #ccc;
-  padding: 12px;
-  margin: 12px 0;
-  background: #fff;
-  color: black; /* remove red text */
-  max-width: 600px;
-}
+.drama-card{ 
+background-color: white;
+width: 100%;
+height: 100%;
+border: 1px solid #999;
+border-radius: 10px;
 
-/* Title */
-.episode-card h3 {
-  margin: 0 0 6px 0;
-}
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+max-width: 300px;
+margin: 0 auto;
+padding: 0px 15px 20px 15px;
+box-sizing: border-box;
+ box-shadow: 5px 5px 30px GREY;
+ }
 
-/* Episode code above image */
-.episode-code {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* Image styling */
-.episode-card img {
-  width: 100%;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-/* Summary spacing */
-.episode-card div {
-  margin-top: 10px;
-}
-
-#searchBar {
-  width: 300px;
-  padding: 8px;
-  margin-bottom: 10px;
-}
-
-#episodeCount {
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+ .small-card{
+border: 1px solid black;
+width: 300px;
+border-radius: 20px;
+height: 65px;
+margin-bottom: 15px;
+align-items: center;
+justify-content: center;
+display: flex;
+ }

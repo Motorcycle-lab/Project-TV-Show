@@ -1,18 +1,39 @@
 //You can edit ALL of the code here
 
-function setup() {
-  const allEpisodes = getAllEpisodes();
+let allEpisodesCache = [];
 
-  createSelectElement();
-  createOptionElements();
-  SetupSearchBar();
-  EventChange();
+async function setup() {
+  const rootElem = document.getElementById("root");
 
-  handleSearchINput();
+  rootElem.textContent = "Loading episodes, please wait ...";
 
-  makePageForEpisodes(allEpisodes);
+  try {
+    const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const allEpisodes = await response.json();
+    allEpisodesCache = allEpisodes;
+
+    rootElem.textContent = "";
+
+    SetupSearchBar();e
+    createSelectElement();
+    createOptionElements(allEpisodes);
+    EventChange(allEpisodes);
+    handleSearchINput(allEpisodes);
+
+    makePageForEpisodes(allEpisodes);
+  } catch (error) {
+    showErrorState("Failed to load episodes. Please try again later.");
+  }
 }
-
+function showErrorState(message) {
+  const rootElem = document.getElementById("root");
+  rootElem.innerHTML = `<P style="color: red; font-weight: bold;">${message}<p>`;
+}
 function formatEpisodeCode(season, episode) {
   const formattedSeason = String(season).padStart(2, "0");
   const formattedNumber = String(episode).padStart(2, "0");
@@ -28,7 +49,7 @@ function createSelectElement() {
   return createSelect;
 }
 
-function createOptionElements() {
+function createOptionElements(episodes) {
   const createSelect = document.getElementById("episode-select");
 
   const defaultOption = document.createElement("option");
@@ -36,8 +57,8 @@ function createOptionElements() {
   defaultOption.textContent = "Show all episodes";
   createSelect.appendChild(defaultOption);
   //create option value for every episode in the list
-  const allEpisodes = getAllEpisodes();
-  allEpisodes.map((episode) => {
+
+  episodes.map((episode) => {
     let option = document.createElement("option");
     option.value = episode.id;
     option.textContent = `${formatEpisodeCode(episode.season, episode.number)} - ${episode.name}`;
@@ -45,16 +66,15 @@ function createOptionElements() {
   });
 }
 
-function EventChange() {
-  const AllEpisodes = getAllEpisodes();
+function EventChange(episodes) {
   const createSelect = document.getElementById("episode-select");
 
   createSelect.addEventListener("change", (event) => {
     const selectedValue = event.target.value;
     if (selectedValue === "ALL") {
-      makePageForEpisodes(AllEpisodes);
+      makePageForEpisodes(episodes);
     } else {
-      const result = AllEpisodes.filter(
+      const result = episodes.filter(
         (episode) => episode.id === Number(createSelect.value),
       );
       makePageForEpisodes(result);
@@ -79,12 +99,11 @@ function SetupSearchBar() {
 
 //show the specific episode when the user types.
 
-function handleSearchINput() {
-  const allEpisodes = getAllEpisodes();
+function handleSearchINput(episodes) {
   const searchInput = document.getElementById("search-input");
   searchInput.addEventListener("input", (event) => {
     const searchTerm = event.target.value.toLowerCase().trim();
-    const FilterEpisode = allEpisodes.filter((episode) => {
+    const FilterEpisode = episodes.filter((episode) => {
       const matchName = episode.name.toLowerCase().includes(searchTerm);
       const matchSummary = episode.summary.toLowerCase().includes(searchTerm);
       const matchCode = formatEpisodeCode(episode.season, episode.number)
@@ -101,10 +120,10 @@ function makePageForEpisodes(episodeTodisplay) {
   rootElem.innerHTML = "";
 
   //update the counter display
-  const allEpisodes = getAllEpisodes();
+
   const countElem = document.getElementById("search-count");
   if (countElem) {
-    countElem.textContent = `Displaying ${episodeTodisplay.length}/${allEpisodes.length} episodes`;
+    countElem.textContent = `Displaying ${episodeTodisplay.length}/${allEpisodesCache.length} episodes`;
   }
 
   const card = episodeTodisplay.map((episode) => createDramaCard(episode));
@@ -138,7 +157,7 @@ function createDramaCard(episode) {
   card.append(img);
 
   const summaryElem = document.createElement("div");
-  summaryElem.innerHTML = episode.summary;
+  summaryElem.innerHTML = episode.summary || "<p>No summary available.</p>";
   card.append(summaryElem);
 
   return card;

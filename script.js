@@ -19,7 +19,7 @@ async function setup() {
 
     rootElem.textContent = "";
 
-    SetupSearchBar();e
+    SetupSearchBar();
     createSelectElement();
     createOptionElements(allEpisodes);
     EventChange(allEpisodes);
